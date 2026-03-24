@@ -2,21 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symtable.h"
-
+/* number of buckets */
 #define BUCKET_COUNT 509
 
 struct Binding {
+    /* value */
     const void* value;
+    /* key */
     char* key;
+    /* next binding */
     struct Binding* next;
 };
 
 struct SymTable_T {
+    /* array of linked lists */
     struct Binding* Buckets[BUCKET_COUNT];
+    /* size of symbol table */
     size_t length;
 };
 
-
+/* hashing */
 static size_t SymTable_hash(const char *pcKey, size_t uBucketCount){
     
     const size_t HASH_MULTIPLIER = 65599;
@@ -76,6 +81,7 @@ int SymTable_put(SymTable_T oSymTable,
 
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
+    assert(pvValue != NULL);
     
     hash = SymTable_hash(pcKey, BUCKET_COUNT);
 
@@ -120,6 +126,7 @@ void *SymTable_replace(SymTable_T oSymTable,
 
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
+    assert(pvValue != NULL);
 
     hash = SymTable_hash(pcKey, BUCKET_COUNT);
 
@@ -247,6 +254,8 @@ void SymTable_map(SymTable_T oSymTable,
 
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
+    assert(pvValue != NULL);
+    assert(pvExtra != NULL);
     
     for (i = 0; i < BUCKET_COUNT; i++){
         next = oSymTable->Buckets[i];
