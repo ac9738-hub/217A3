@@ -21,7 +21,7 @@ struct SymTable_T {
 /*------------------------------------------------------------*/
  
 SymTable_T SymTable_new(void) {
-    struct SymTable_T *oSymTable = malloc(sizeof(struct SymTable));
+    struct SymTable_T *oSymTable = malloc(sizeof(struct SymTable_T));
     if (oSymTable == NULL) return NULL;
     oSymTable->length = 0;
     oSymTable->first = NULL;
@@ -161,6 +161,7 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
     
     struct Binding* next;
+    void* retval;
 
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
@@ -177,7 +178,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
         }
         else oSymTable->first = NULL;
 
-        void* retval = (void*) next->value;
+        retval = (void*) next->value;
 
         free(next->key);
         free(next);
