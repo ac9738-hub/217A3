@@ -11,8 +11,8 @@ struct Binding {
     struct Binding* next;
 };
 
-struct SymTable {
-    struct Binding* Buckets[BUCKET_COUNT];  /* Now uses constant */
+struct SymTable_T {
+    struct Binding* Buckets[BUCKET_COUNT];
     size_t length;
 };
 
@@ -32,7 +32,7 @@ static size_t SymTable_hash(const char *pcKey, size_t uBucketCount){
 }
 
 SymTable_T SymTable_new(void) {
-    struct SymTable* oSymTable = calloc(1, sizeof(struct SymTable));
+    struct SymTable_T* oSymTable = calloc(1, sizeof(struct SymTable_T));
     if (oSymTable == NULL) return NULL;
     oSymTable->length = 0;
     return oSymTable;
@@ -180,4 +180,81 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey) {
             return (void*) next->value;
         }
 
-        next = ne
+        next = next->next;
+    }
+
+    return NULL;
+}
+
+void *SymTable_remove(SymTable_T oSymTable, const char *pcKey) {
+    
+    struct Binding* next;
+    struct Binding* temp;
+    void* retval;
+    size_t hash;
+
+    assert(oSymTable != NULL);
+    assert(pcKey != NULL);
+
+    hash = SymTable_hash(pcKey, BUCKET_COUNT);
+    next = oSymTable->Buckets[hash];
+
+    if (next == NULL) {
+        return NULL;
+    }
+
+    if (strcmp(next->key, pcKey) == 0) {
+        if (next->next != NULL) {
+            oSymTable->Buckets[hash] = next->next;
+        }
+        else {
+            oSymTable->Buckets[hash] = NULL;
+        }
+
+        retval = (void*) next->value;
+
+        free(next->key);
+        free(next);
+        
+        oSymTable->length--;
+        return retval;
+    }
+
+    while (next->next != NULL) {
+        if (strcmp(next->next->key, pcKey) == 0) {
+            temp = next->next;
+            retval = (void*) temp->value;
+            next->next = temp->next;
+            free(temp->key);
+            free(temp);
+
+            oSymTable->length--;
+            return retval;
+        }
+        next = next->next;
+    }
+
+    return NULL;
+}
+
+
+void SymTable_map(SymTable_T oSymTable,
+    void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
+    const void *pvExtra){
+
+    int i;
+    struct Binding* next;
+
+    assert(oSymTable != NULL);
+    assert(pfApply != NULL);
+    
+    for (i = 0; i < BUCKET_COUNT; i++){
+        next = oSymTable->Buckets[i];
+
+        while(next != NULL) {
+            pfApply(next->key, (void*) next->value, (void*) pvExtra);
+
+            next = next->next;
+        }
+    }
+}
