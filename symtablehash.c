@@ -1,3 +1,5 @@
+/* hash implementation of symbol table */
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +23,7 @@ struct SymTable_T {
     size_t length;
 };
 
-/* hashing */
+/* hashing using pcKey and uBucketCount returns a size_t hasing value */
 static size_t SymTable_hash(const char *pcKey, size_t uBucketCount){
     
     const size_t HASH_MULTIPLIER = 65599;
