@@ -1,3 +1,5 @@
+/*linked list implementation of a symbol table*/
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,15 +8,20 @@
 /* A single binding: holds a defensive copy of the key, a value,
    and a pointer to the next binding in the list. */
 struct Binding {
+    /* key */
     char *key;
+    /* value */
     const void *value;
+    /* pointer to next Binding */
     struct Binding *next;
 };
  
 /* A SymTable holds a pointer to the first binding and
    a count of how many bindings it contains. */
 struct SymTable_T {
+    /* size of symbol table*/
     size_t length;
+    /* pointer to first binding */
     struct Binding *first;
 };
  
@@ -63,6 +70,7 @@ int SymTable_put(SymTable_T oSymTable,
  
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
+    assert(pvValue != NULL);
  
     /* check for duplicate key */
     next = oSymTable->first;
@@ -99,6 +107,7 @@ void *SymTable_replace(SymTable_T oSymTable,
  
     assert(oSymTable != NULL);
     assert(pcKey != NULL);
+    assert(pvValue != NULL);
  
     /* check for duplicate key */
     next = oSymTable->first;
@@ -214,6 +223,7 @@ void SymTable_map(SymTable_T oSymTable,
 
     assert(oSymTable != NULL);
     assert(pfApply != NULL);
+    assert(pvExtra != NULL);
 
     next = oSymTable->first;
 
