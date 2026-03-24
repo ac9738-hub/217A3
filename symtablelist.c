@@ -13,7 +13,7 @@ struct Binding {
  
 /* A SymTable holds a pointer to the first binding and
    a count of how many bindings it contains. */
-struct SymTable {
+struct SymTable_T {
     size_t length;
     struct Binding *first;
 };
